@@ -168,6 +168,36 @@
       border-radius: 6px;
       font-size: 14px;
     }
+
+    /* MOBILE CONTROLS */
+    #mobileControls {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      z-index: 9999;
+      display: none;
+    }
+
+    #mobileControls button {
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      border-radius: 50%;
+      border: none;
+      background-color: rgba(0,0,0,0.7);
+      color: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      #mobileControls {
+        display: flex;
+      }
+    }
   </style>
 </head>
 <body>
@@ -184,6 +214,12 @@
   <button id="startBtn">Start Game</button>
   <div id="gameOver">Game Over<br><br><button id="restartBtn">Restart</button></div>
   <div id="playerCar"></div>
+</div>
+
+<!-- Mobile Buttons -->
+<div id="mobileControls">
+  <button id="leftBtn">⟵</button>
+  <button id="rightBtn">⟶</button>
 </div>
 
 <audio id="superspeedSound" src="superseed-collect.mp3"></audio>
@@ -211,9 +247,10 @@
   const bgMusic = document.getElementById('bgMusic');
   const musicToggle = document.getElementById('musicToggle');
   const startBtn = document.getElementById('startBtn');
+  const leftBtn = document.getElementById("leftBtn");
+  const rightBtn = document.getElementById("rightBtn");
 
   let musicPlaying = false;
-
   const enemyColors = ['enemy-car-red.png', 'enemy-car-yellow.png'];
 
   function showGameUI() {
@@ -347,10 +384,8 @@
   function endGame() {
     gameRunning = false;
     document.body.classList.remove('hide-cursor');
-    driveSound.pause();
-    driveSound.currentTime = 0;
-    bgMusic.pause();
-    bgMusic.currentTime = 0;
+    driveSound.pause(); driveSound.currentTime = 0;
+    bgMusic.pause(); bgMusic.currentTime = 0;
     musicPlaying = false;
     musicToggle.textContent = '🔇 Music Off';
     gameOverScreen.style.display = 'block';
@@ -391,6 +426,28 @@
     }
     musicPlaying = !musicPlaying;
   });
+
+  // Mobile button support
+  let leftInterval, rightInterval;
+  leftBtn.addEventListener("touchstart", () => {
+    leftInterval = setInterval(() => {
+      if (carLeft > 0) {
+        carLeft -= 5;
+        playerCar.style.left = `${carLeft}px`;
+      }
+    }, 50);
+  });
+  leftBtn.addEventListener("touchend", () => clearInterval(leftInterval));
+
+  rightBtn.addEventListener("touchstart", () => {
+    rightInterval = setInterval(() => {
+      if (carLeft < 340) {
+        carLeft += 5;
+        playerCar.style.left = `${carLeft}px`;
+      }
+    }, 50);
+  });
+  rightBtn.addEventListener("touchend", () => clearInterval(rightInterval));
 </script>
 </body>
 </html>
